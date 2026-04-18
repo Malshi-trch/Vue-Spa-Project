@@ -1,23 +1,19 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import type { Recipe } from './types'; // Import the interface
+import type { Recipe } from './types';
 import RecipeCard from './components/RecipeCard.vue';
 
-const recipes = ref<Recipe[]>([]); // Strict typing here
+const recipes = ref<Recipe[]>([]);
 
 onMounted(async () => {
-  const response = await fetch('https://dummyjson.com/recipes');
-  const data = await response.json();
+  const res = await fetch('https://dummyjson.com/recipes');
+  const data = await res.json();
   recipes.value = data.recipes;
 });
 </script>
 
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-    <RecipeCard 
-      v-for="recipe in recipes" 
-      :key="recipe.id" 
-      :recipe="recipe" 
-    />
+  <div class="main-layout">
+    <RecipeCard v-for="r in recipes" :key="r.id" :recipe="r" />
   </div>
 </template>
