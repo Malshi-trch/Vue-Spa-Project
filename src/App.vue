@@ -16,5 +16,6 @@ onMounted(async () => {
 <template>
   <div class="main-layout">
     <RecipeCard v-for="r in recipes" :key="r.id" :recipe="r" />
+    <NavBar />
   </div>
 </template>
