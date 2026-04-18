@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import type { Recipe } from './types';
 import RecipeCard from './components/RecipeCard.vue';
+import NavBar from './components/NavBar.vue';
 
 const recipes = ref<Recipe[]>([]);
 
