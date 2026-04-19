@@ -4,6 +4,7 @@ import type { Recipe } from './types';
 import RecipeCard from './components/RecipeCard.vue';
 import NavBar from './components/NavBar.vue';
 import FilterBar from './components/FilterBar.vue';
+import { computed } from 'vue';
 
 const recipes = ref<Recipe[]>([]);
 const selectedCategory = ref<string>('All');
@@ -14,14 +15,10 @@ onMounted(async () => {
   recipes.value = data.recipes;
 });
 
-const handleFilter = (category: string) => {
-  if (category === 'All') {
-    // Reset to full list
-  } else {
-    // Logic: Filter your 'recipes' array based on the category
-    console.log("Filtering by:", category);
-  }
-};
+const filteredRecipes = computed(() => {
+  if (selectedCategory.value === 'All') return recipes.value;
+  return recipes.value.filter(r => r.cuisine === selectedCategory.value);
+});
 </script>
 
 <template>
