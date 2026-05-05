@@ -24,3 +24,5 @@ const handleInput = (event: Event) => {
     </div>
   </nav>
 </template>
+// Inside NavBar.vue
+const emit = defineEmits<{ (e: 'search', query: string): void }>();
