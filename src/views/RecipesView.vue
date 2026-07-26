@@ -44,7 +44,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import RecipeDetailView from '../components/RecipeDetailView.vue';
+import RecipeDetailView from '../components/RecipeDetailView.vue/index.js';
 
 const showDropdown = ref(false);
 const selectedRecipe = ref(null);

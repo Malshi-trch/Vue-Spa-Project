@@ -1,119 +1,66 @@
 <template>
-    <div class="recipe-detail">
-        <div class="recipe-hero-image"></div>
-
-        <h2 class="recipe-title">{{ recipe.title || 'Indian Yellow Rice' }}</h2>
-
-        <div class="meta-strip">
-            <span>⭐ 4.5</span>
-            <span>⏱️ 20 min</span>
+    <div class="recipe-detail bg-white dark:bg-zinc-900 rounded-2xl p-4 border border-gray-100 dark:border-zinc-800">
+        <!-- Hero Image Placeholder -->
+        <div
+            class="w-full aspect-video bg-gray-100 dark:bg-zinc-800 rounded-xl mb-4 flex items-center justify-center text-4xl">
+            🍲
         </div>
 
-        <div class="tabs-navigation">
-            <button :class="{ active: activeTab === 'ingredients' }" @click="activeTab = 'ingredients'">
+        <!-- Title & Meta -->
+        <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-1">
+            {{ recipe.title || recipe.name }}
+        </h3>
+        <div class="flex gap-3 text-xs font-medium text-gray-500 dark:text-zinc-400 mb-4">
+            <span>⭐ {{ recipe.rating }}</span>
+            <span>⏱️ {{ recipe.time }}</span>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-gray-100 dark:border-zinc-800 mb-4">
+            <button @click="activeTab = 'ingredients'"
+                :class="['pb-2 px-4 text-xs font-bold border-b-2 transition-colors', activeTab === 'ingredients' ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-gray-400']">
                 Ingredients
             </button>
-            <button :class="{ active: activeTab === 'instructions' }" @click="activeTab = 'instructions'">
+            <button @click="activeTab = 'instructions'"
+                :class="['pb-2 px-4 text-xs font-bold border-b-2 transition-colors', activeTab === 'instructions' ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-gray-400']">
                 Instructions
             </button>
         </div>
 
-        <div class="tab-content-panel">
-            <div v-if="activeTab === 'ingredients'" class="ingredients-list">
-                <ul>
-                    <li>• 1.5 cup Washed and drained rice</li>
-                    <li>• 3 cloves of garlic</li>
-                    <li>• 1 inch piece of ginger</li>
-                    <li>• 1 tbsp butter</li>
-                    <li>• 4 cardamom</li>
-                    <li>• 0.25 tsp turmeric powder</li>
-                    <li>• 0.25 cup chopped onion</li>
-                    <li>• 2 cup chicken or vegetable stock</li>
-                    <li>• 0.25 cup unsweetened coconut cream</li>
-                </ul>
-            </div>
-
-            <div v-else class="instructions-steps">
-                <ol>
-                    <li><strong>1. Rinse the Rice:</strong> Wash the rice 2-3 times until the water runs clear to remove
-                        excess starch.</li>
-                    <li><strong>2. Toast the Rice:</strong> Before adding liquid, toast the rice in oil or butter for
-                        1-2 minutes.</li>
-                    <li><strong>3. Use Proper Ratio:</strong> The general ratio for perfect yellow rice is 1 part rice
-                        to 2 parts liquid.</li>
-                    <li><strong>4. Seal the Steam:</strong> Once the rice is simmering, let it rest, covered, for
-                        another 5-10 minutes.</li>
-                </ol>
-            </div>
+        <!-- Dynamic Content Panels -->
+        <div class="text-sm text-gray-600 dark:text-zinc-300">
+            <ul v-if="activeTab === 'ingredients'" class="list-disc list-inside space-y-1.5">
+                <li v-for="(ingredient, idx) in recipe.ingredients" :key="idx">
+                    {{ ingredient }}
+                </li>
+            </ul>
+            <ol v-else class="list-decimal list-inside space-y-2">
+                <li v-for="(step, idx) in recipe.instructions" :key="idx" class="leading-relaxed">
+                    {{ step }}
+                </li>
+            </ol>
         </div>
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 
-defineProps({
-    recipe: Object
-});
+interface Recipe {
+    id: number;
+    title?: string;
+    name?: string;
+    rating: string;
+    time: string;
+    ingredients?: string[];
+    instructions?: string[];
+    [key: string]: any;
+}
 
-const activeTab = ref('ingredients');
+// Accept the selected recipe from the parent view
+defineProps<{
+    recipe: Recipe;
+}>();
+
+const activeTab = ref<'ingredients' | 'instructions'>('ingredients');
 </script>
-
-<style scoped>
-.recipe-hero-image {
-    width: 100%;
-    height: 220px;
-    background-color: #e5c158;
-    border-radius: 16px;
-    margin-bottom: 15px;
-}
-
-.recipe-title {
-    margin-bottom: 5px;
-    font-size: 22px;
-}
-
-.meta-strip {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
-    opacity: 0.8;
-    font-size: 14px;
-}
-
-.tabs-navigation {
-    display: flex;
-    border-bottom: 2px solid var(--accent-gray);
-    margin-bottom: 15px;
-}
-
-.tabs-navigation button {
-    flex: 1;
-    padding: 10px;
-    background: none;
-    border: none;
-    color: var(--text-color);
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.tabs-navigation button.active {
-    border-bottom: 3px solid var(--primary-green);
-    color: var(--primary-green);
-}
-
-.tab-content-panel {
-    line-height: 1.6;
-    font-size: 14px;
-}
-
-.ingredients-list ul,
-.instructions-steps ol {
-    list-style: none;
-}
-
-.ingredients-list li,
-.instructions-steps li {
-    margin-bottom: 12px;
-}
-</style>
