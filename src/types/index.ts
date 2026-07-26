@@ -4,12 +4,22 @@ export interface Recipe {
   ingredients: string[];
   instructions: string[];
   prepTimeMinutes: number;
-  difficulty: string;
+  cookTimeMinutes: number;
+  servings: number;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
   cuisine: string;
+  caloriesPerServing: number;
+  tags: string[];
+  userId: number;
   image: string;
   rating: number;
+  reviewCount: number;
+  mealType: string[];
 }
 
-export interface RecipeResponse {
+export interface RecipeAPIResponse {
   recipes: Recipe[];
+  total: number;
+  skip: number;
+  limit: number;
 }
