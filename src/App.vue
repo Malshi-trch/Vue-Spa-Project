@@ -1,49 +1,32 @@
 <template>
   <div class="app-container" :class="{ 'dark-theme': isDark }">
-    <!-- Main Content Area -->
+    <!-- Main Content Area managed by Vue Router -->
     <main class="main-content">
-      <component :is="currentViewComponent" @navigate="navigateTo" />
+      <RouterView />
     </main>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- Bottom Navigation Bar using RouterLink -->
     <nav class="bottom-nav">
-      <button class="nav-item" :class="{ active: currentView === 'home' }" @click="navigateTo('home')">
+      <RouterLink to="/" class="nav-item" exact-active-class="active">
         <span class="icon">🔍</span>
         <span class="label">search</span>
-      </button>
-      <button class="nav-item" :class="{ active: currentView === 'recipes' }" @click="navigateTo('recipes')">
+      </RouterLink>
+      <RouterLink to="/recipes" class="nav-item" exact-active-class="active">
         <span class="icon">❤️</span>
         <span class="label">favorite</span>
-      </button>
-      <button class="nav-item" :class="{ active: currentView === 'profile' }" @click="navigateTo('profile')">
+      </RouterLink>
+      <RouterLink to="/profile" class="nav-item" exact-active-class="active">
         <span class="icon">👤</span>
         <span class="label">profile</span>
-      </button>
+      </RouterLink>
     </nav>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import HomeView from './components/HomeView.vue';
-import RecipesView from './components/RecipesView.vue';
-import ProfileView from './components/ProfileView.vue';
+import { ref } from 'vue';
 
-const currentView = ref('home');
-const isDark = ref(true); // Toggle to match light/dark mockups
-
-const currentViewComponent = computed(() => {
-  switch (currentView.value) {
-    case 'home': return HomeView;
-    case 'recipes': return RecipesView;
-    case 'profile': return ProfileView;
-    default: return HomeView;
-  }
-});
-
-function navigateTo(view) {
-  currentView.value = view;
-}
+const isDark = ref(true); 
 </script>
 
 <style>
@@ -111,8 +94,7 @@ body {
 }
 
 .nav-item {
-  background: none;
-  border: none;
+  text-decoration: none;
   color: var(--text-color);
   display: flex;
   flex-direction: column;
