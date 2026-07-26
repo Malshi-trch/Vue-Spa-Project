@@ -1,11 +1,9 @@
-import { createApp } from 'vue';
-import App from './App.vue';
-import { router } from './router'; // Make sure the path matches where your router file lives
-import './style.css';
+import { createApp } from "vue";
+import App from "./App.vue";
+import router from "./router"; // Fixed: Imported without curly braces to match 'export default router'
+import "./style.css";
 
 const app = createApp(App);
 
-// Crucial step: Register the router plugin
 app.use(router);
-
-app.mount('#app');
+app.mount("#app");
