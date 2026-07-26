@@ -1,27 +1,37 @@
 <script setup lang="ts">
-// 1. Define the event the parent (App.vue) will listen for
-const emit = defineEmits<{
-  (e: 'filter', category: string): void
-}>();
+import { ref } from 'vue';
 
-// 2. Define your static categories (these could come from the API later)
-const categories = ['All', 'Breakfast', 'Lunch', 'Dinner', 'Dessert'];
+const emit = defineEmits<{ (e: 'filter', category: string): void }>();
 
-// 3. Simple function to send the selection to the parent
-const selectCategory = (category: string) => {
-  emit('filter', category);
+const categories = ['All', 'Italian', 'Asian', 'Mexican', 'Indian', 'American', 'Mediterranean'];
+const activeCategory = ref<string>('All');
+
+const selectCategory = (cat: string) => {
+  activeCategory.value = cat;
+  emit('filter', cat);
 };
 </script>
 
 <template>
-  <div class="flex gap-2 p-4 justify-center">
-    <button 
-      v-for="cat in categories" 
+  <div class="w-full overflow-x-auto no-scrollbar flex items-center gap-2 px-4 py-2 my-1">
+    <button
+      v-for="cat in categories"
       :key="cat"
       @click="selectCategory(cat)"
-      class="px-4 py-2 border rounded-full hover:bg-blue-100 transition"
+      :class="[
+        'px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200',
+        activeCategory === cat 
+          ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/20' 
+          : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-400 hover:bg-gray-200 dark:hover:bg-zinc-700'
+      ]"
     >
       {{ cat }}
     </button>
   </div>
 </template>
+
+<style scoped>
+/* Hidden utility scrollbar wrapper for modern touch scrolling */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
