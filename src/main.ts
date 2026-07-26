@@ -1,5 +1,11 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
+import { router } from './router'; // Make sure the path matches where your router file lives
+import './style.css';
 
-createApp(App).mount('#app')
+const app = createApp(App);
+
+// Crucial step: Register the router plugin
+app.use(router);
+
+app.mount('#app');
