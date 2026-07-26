@@ -1,56 +1,48 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import type { Recipe } from './types';
-import RecipeCard from './components/RecipeCard.vue';
-import NavBar from './components/NavBar.vue';
-import FilterBar from './components/FilterBar.vue';
+import { ref, onMounted } from 'vue';
 
-// 1. Core State
-const recipes = ref<Recipe[]>([]);
-const selectedCategory = ref<string>('All');
-const searchQuery = ref<string>(''); // For the search bar
+const isDark = ref<boolean>(false);
 
-// 2. UX State (Loading & Errors)
-const isLoading = ref<boolean>(true);
-const errorMessage = ref<string | null>(null);
-
-// 3. Resilient Data Fetching
-onMounted(async () => {
-  try {
-    isLoading.value = true;
-    errorMessage.value = null;
-    
-    const res = await fetch('https://dummyjson.com/recipes');
-    if (!res.ok) throw new Error('Failed to fetch recipes from server.');
-    
-    const data = await res.json();
-    recipes.value = data.recipes;
-  } catch (err) {
-    errorMessage.value = err instanceof Error ? err.message : 'An unexpected error occurred.';
-    console.error(err);
-  } finally {
-    isLoading.value = false;
+const toggleTheme = (): void => {
+  isDark.value = !isDark.value;
+  if (isDark.value) {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
   }
-});
+};
 
-// 4. Combined Filter & Search Logic
-const filteredRecipes = computed(() => {
-  let result = recipes.value;
-
-  // Step A: Filter by cuisine category
-  if (selectedCategory.value !== 'All') {
-    result = result.filter(r => r.cuisine === selectedCategory.value);
+onMounted((): void => {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    isDark.value = true;
+    document.documentElement.classList.add('dark');
   }
-
-  // Step B: Filter by search query text
-  if (searchQuery.value.trim() !== '') {
-    const query = searchQuery.value.toLowerCase().trim();
-    result = result.filter(r => 
-      r.name.toLowerCase().includes(query) || 
-      r.ingredients.some(ing => ing.toLowerCase().includes(query))
-    );
-  }
-
-  return result;
 });
 </script>
+
+<template>
+  <div class="min-h-screen w-full bg-gray-100 dark:bg-zinc-950 flex justify-center items-start py-0 md:py-6 transition-colors duration-300">
+    <!-- Viewport Container strictly bounded to mobile frames matching Figma screens -->
+    <main class="w-full max-w-md min-h-screen md:min-h-[844px] bg-white dark:bg-zinc-900 shadow-2xl relative flex flex-col overflow-hidden md:rounded-[40px] border border-transparent md:border-gray-200/50 dark:md:border-zinc-800">
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" :isDark="isDark" @toggle-theme="toggleTheme" />
+        </transition>
+      </router-view>
+    </main>
+  </div>
+</template>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
