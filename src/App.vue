@@ -5,50 +5,52 @@ import RecipeCard from './components/RecipeCard.vue';
 import NavBar from './components/NavBar.vue';
 import FilterBar from './components/FilterBar.vue';
 
-// 1. Define all your reactive state at the top
+// 1. Core State
 const recipes = ref<Recipe[]>([]);
 const selectedCategory = ref<string>('All');
-const searchQuery = ref<string>(''); // This was the missing piece
+const searchQuery = ref<string>(''); // For the search bar
 
-// 2. Lifecycle hook stands alone
+// 2. UX State (Loading & Errors)
+const isLoading = ref<boolean>(true);
+const errorMessage = ref<string | null>(null);
+
+// 3. Resilient Data Fetching
 onMounted(async () => {
-  const res = await fetch('https://dummyjson.com/recipes');
-  const data = await res.json();
-  recipes.value = data.recipes;
+  try {
+    isLoading.value = true;
+    errorMessage.value = null;
+    
+    const res = await fetch('https://dummyjson.com/recipes');
+    if (!res.ok) throw new Error('Failed to fetch recipes from server.');
+    
+    const data = await res.json();
+    recipes.value = data.recipes;
+  } catch (err) {
+    errorMessage.value = err instanceof Error ? err.message : 'An unexpected error occurred.';
+    console.error(err);
+  } finally {
+    isLoading.value = false;
+  }
 });
 
-// 3. One single computed property to handle all logic
+// 4. Combined Filter & Search Logic
 const filteredRecipes = computed(() => {
   let result = recipes.value;
 
-  // Filter by category
+  // Step A: Filter by cuisine category
   if (selectedCategory.value !== 'All') {
     result = result.filter(r => r.cuisine === selectedCategory.value);
   }
 
-  // Filter by search text
-  if (searchQuery.value) {
+  // Step B: Filter by search query text
+  if (searchQuery.value.trim() !== '') {
+    const query = searchQuery.value.toLowerCase().trim();
     result = result.filter(r => 
-      r.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+      r.name.toLowerCase().includes(query) || 
+      r.ingredients.some(ing => ing.toLowerCase().includes(query))
     );
   }
 
   return result;
 });
 </script>
-
-<template>
-  <div class="main-layout">
-    <NavBar @search="(q) => searchQuery = q" />
-
-    <FilterBar @filter="(cat) => selectedCategory = cat" />
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <RecipeCard 
-        v-for="recipe in filteredRecipes" 
-        :key="recipe.id" 
-        :recipe="recipe" 
-      />
-    </div>
-  </div>
-</template>
