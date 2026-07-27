@@ -33,7 +33,7 @@
       </div>
 
       <!-- Bookmarked Favorites View Segment -->
-      <div v-slot="favorite" v-else-if="state.currentTab === 'favorite'">
+      <div v-else-if="state.currentTab === 'favorite'">
         <h2 class="text-center text-lg font-black tracking-wide my-6 uppercase">Your Saved Favorites</h2>
         <div v-if="favoriteRecipes.length === 0" class="text-center py-12 text-sm text-gray-400">
           No favorite recipes added yet.
