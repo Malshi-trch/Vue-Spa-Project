@@ -1,65 +1,115 @@
 <template>
-    <div class="bg-white dark:bg-gray-900 min-h-screen pb-24 transition-colors animate-fade-in">
-        <!-- Context Top Bar -->
-        <div
-            class="p-4 flex items-center justify-between sticky top-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur z-10 border-b border-gray-100 dark:border-gray-800">
-            <button @click="actions.selectRecipe(null)"
-                class="px-4 py-1.5 bg-gray-100 dark:bg-gray-800 text-xs font-semibold rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
-                ← Back to recipes
-            </button>
-            <span class="text-sm font-bold text-gray-800 dark:text-white truncate max-w-xs">{{ recipe.name }}</span>
-        </div>
-
-        <!-- Image Showcase Frame -->
-        <div class="w-full aspect-[4/3] md:max-h-96 overflow-hidden bg-gray-100 relative">
-            <img :src="recipe.image" :alt="recipe.name" class="w-full h-full object-cover" />
-            <div
-                class="absolute bottom-4 left-4 right-4 bg-black/40 backdrop-blur-md p-3 rounded-xl flex justify-between text-white text-sm">
-                <span>⭐ {{ recipe.rating }} Rating</span>
-                <span>⏱️ {{ recipe.prepTimeMinutes + recipe.cookTimeMinutes }} mins Total</span>
-            </div>
-        </div>
-
-        <!-- Info Detail Body -->
-        <div class="p-5 max-w-2xl mx-auto">
-            <h2 class="text-2xl font-black text-gray-900 dark:text-white mb-4 text-center">{{ recipe.name }}</h2>
-
-            <!-- Figma Style Custom Tab Toggle Setup -->
-            <div class="grid grid-cols-2 gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl mb-6">
-                <button @click="activeTab = 'instructions'" class="py-2.5 text-sm font-bold rounded-lg transition-all"
-                    :class="activeTab === 'instructions' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'">
-                    Instructions
-                </button>
-                <button @click="activeTab = 'ingredients'" class="py-2.5 text-sm font-bold rounded-lg transition-all"
-                    :class="activeTab === 'ingredients' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'">
-                    Ingredients
-                </button>
-            </div>
-
-            <!-- Tab Content Frame panels -->
-            <div class="space-y-2 text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-                <div v-if="activeTab === 'ingredients'"
-                    class="bg-gray-50 dark:bg-gray-950 p-4 rounded-2xl border border-gray-100 dark:border-gray-800">
-                    <ul class="space-y-3">
-                        <li v-for="(ing, idx) in recipe.ingredients" :key="idx" class="flex items-start gap-2">
-                            <span class="text-blue-500 mt-0.5">•</span>
-                            <span>{{ ing }}</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div v-else
-                    class="bg-gray-50 dark:bg-gray-950 p-4 rounded-2xl border border-gray-100 dark:border-gray-800">
-                    <ol class="space-y-4">
-                        <li v-for="(step, idx) in recipe.instructions" :key="idx" class="flex gap-3">
-                            <span class="font-bold text-blue-500 min-w-[1.25rem]">{{ idx + 1 }}.</span>
-                            <span>{{ step }}</span>
-                        </li>
-                    </ol>
-                </div>
-            </div>
-        </div>
+  <div class="flex-1 max-w-4xl w-full mx-auto px-4 py-6 md:py-10 animate-fade-in">
+    <!-- Top Action Row (Matches your clean header look) -->
+    <div class="flex items-center justify-between mb-6">
+      <button 
+        @click="closeDetail"
+        class="flex items-center gap-2 px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-all active:scale-95"
+      >
+        <span>←</span> Back to recipes
+      </button>
+      <span class="text-xs font-bold uppercase tracking-wider text-amber-500 bg-amber-50 dark:bg-amber-950/40 px-3 py-1 rounded-full">
+        {{ recipe.cuisine }}
+      </span>
     </div>
+
+    <!-- Main Container: 1 column on mobile, 2 columns on desktop -->
+    <div class="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800/60 shadow-md overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-4">
+      
+      <!-- Left Column: Hero Image with Floating Info Bar (Error Fixed here) -->
+      <div class="relative w-full aspect-video md:aspect-square bg-gray-100 dark:bg-gray-800 overflow-hidden">
+        <img 
+          :src="recipe.image" 
+          :alt="recipe.name" 
+          class="w-full h-full object-cover"
+        />
+        <!-- Floating Info Overlay (Polished Glassmorphic Look) -->
+        <div class="absolute bottom-4 left-4 right-4 backdrop-blur-md bg-black/40 text-white rounded-2xl px-4 py-3 flex justify-between items-center text-xs font-semibold shadow-sm border border-white/10">
+          <div class="flex items-center gap-1">
+            <span class="text-amber-400 text-sm">⭐</span>
+            <span>{{ recipe.rating.toFixed(1) }} Rating</span>
+          </div>
+          <div class="flex items-center gap-1 opacity-90">
+            <span>⏱️</span>
+            <span>{{ recipe.prepTimeMinutes + recipe.cookTimeMinutes }} mins Total</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Content Section -->
+      <div class="p-6 md:p-8 flex flex-col justify-between">
+        <div>
+          <!-- Clean Centered Headings from Figma look -->
+          <div class="text-center md:text-left mb-6">
+            <h2 class="text-xl md:text-2xl font-black text-gray-900 dark:text-white tracking-tight uppercase leading-snug">
+              {{ recipe.name }}
+            </h2>
+            <div class="w-12 h-1 bg-amber-500 rounded-full mx-auto md:mx-0 mt-2"></div>
+          </div>
+
+          <!-- Rounded Tab Switcher -->
+          <div class="bg-gray-100 dark:bg-gray-800/80 p-1 rounded-2xl flex items-center mb-6 max-w-sm mx-auto md:mx-0">
+            <button 
+              @click="activeTab = 'ingredients'"
+              class="flex-1 text-center py-2 text-xs font-bold rounded-xl transition-all"
+              :class="activeTab === 'ingredients' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600'"
+            >
+              Ingredients
+            </button>
+            <button 
+              @click="activeTab = 'instructions'"
+              class="flex-1 text-center py-2 text-xs font-bold rounded-xl transition-all"
+              :class="activeTab === 'instructions' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600'"
+            >
+              Instructions
+            </button>
+          </div>
+
+          <!-- Tab Content Display Panel (Error Fixed here) -->
+          <div class="min-h-64">
+            <!-- Ingredients List View -->
+            <ul v-if="activeTab === 'ingredients'" class="space-y-3">
+              <li 
+                v-for="(ingredient, idx) in recipe.ingredients" 
+                :key="idx"
+                class="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800/40 px-3 py-2.5 rounded-xl border border-gray-100/50 dark:border-gray-800/30"
+              >
+                <span class="text-amber-500 font-bold mt-0.5">•</span>
+                <span>{{ ingredient }}</span>
+              </li>
+            </ul>
+
+            <!-- Instructions Step View -->
+            <ol v-else class="space-y-4">
+              <li 
+                v-for="(step, idx) in recipe.instructions" 
+                :key="idx"
+                class="flex gap-3 text-sm text-gray-700 dark:text-gray-300"
+              >
+                <span class="flex items-center justify-center bg-amber-500 text-white font-bold text-[10px] w-5 h-5 rounded-full shrink-0 mt-0.5">
+                  {{ idx + 1 }}
+                </span>
+                <span class="leading-relaxed">{{ step }}</span>
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Quick Info Blocks Footer -->
+        <div class="grid grid-cols-2 gap-3 mt-6 pt-4 border-t border-gray-100 dark:border-gray-800 text-center text-xs font-semibold text-gray-500">
+          <div class="bg-gray-50 dark:bg-gray-800/30 p-2.5 rounded-xl">
+            <span class="block text-[10px] uppercase tracking-wider opacity-60 mb-0.5">Difficulty</span>
+            <span class="text-gray-800 dark:text-gray-200 capitalize text-sm font-bold">{{ recipe.difficulty }}</span>
+          </div>
+          <div class="bg-gray-50 dark:bg-gray-800/30 p-2.5 rounded-xl">
+            <span class="block text-[10px] uppercase tracking-wider opacity-60 mb-0.5">Servings</span>
+            <span class="text-gray-800 dark:text-gray-200 text-sm font-bold">🍴 {{ recipe.servings }} people</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -67,6 +117,23 @@ import { ref } from 'vue';
 import type { Recipe } from '../types/recipe';
 import { actions } from '../store/appStore';
 
-defineProps<{ recipe: Recipe }>();
-const activeTab = ref<'instructions' | 'ingredients'>('instructions');
+defineProps<{
+  recipe: Recipe;
+}>();
+
+const activeTab = ref<'ingredients' | 'instructions'>('ingredients');
+
+const closeDetail = () => {
+  actions.selectRecipe(null);
+};
 </script>
+
+<style scoped>
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
