@@ -1,0 +1,18 @@
+The aim 01: Create the initial TypeScript interfaces and structure for fetching recipes from the DummyJSON API.
+Actual prompt: Can you provide TypeScript interfaces for the recipe response data from DummyJSON and a basic fetch setup in Vue 3 script setup?
+
+
+The aim 02: Build a responsive grid layout using Tailwind CSS to display the fetched recipe cards.
+Actual prompt: How can I style a responsive grid layout using Tailwind CSS for a recipe list that adjusts across mobile, tablet, and desktop screens?
+
+
+The aim 03: Implement a search bar and category filter logic to filter recipes dynamically.
+Actual prompt: How do I write a computed property in Vue 3 that filters an array of recipes based on a search query and active category filters?
+
+
+The aim 04: Add sticky header styling with a frosted glass effect to the navigation bar.
+Actual prompt: What Tailwind CSS classes do I need to make my navigation bar sticky at the top with a backdrop blur effect when scrolling down?
+
+
+The aim 05: Fix the dark mode toggle integration between the navigation bar component and the application state store.
+Actual prompt: Here is my NavBar.vue code. How do I make sure the dark mode button triggers both the central store action and the component emit event properly?
