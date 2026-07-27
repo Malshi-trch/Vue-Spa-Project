@@ -1,45 +1,33 @@
 <template>
-  <header
-    class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-3 flex justify-between items-center transition-colors duration-200 sticky top-0 z-40">
-    
-    <!-- 1. Left placeholder to balance the flex layout layout spacing -->
-    <div class="w-24 hidden sm:block"></div>
-
-    <!-- 2. Centered Title Block -->
-    <div class="text-center flex-1 sm:absolute sm:left-1/2 sm:-translate-x-1/2">
-      <h1 class="text-xl font-bold text-gray-900 dark:text-white tracking-wide">RECIPE BOOK</h1>
-      <p class="text-xs md:text-sm text-gray-500 dark:text-gray-300 tracking-wide font-medium mt-1">
-  Find Your Favourite Meal...
-</p>
-    </div>
-    
-    <!-- 3. Right Aligned Toggle Button -->
-    <div class="ml-auto sm:ml-0 z-10">
-      <button @click="handleToggle"
-        class="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:scale-105 transition-all"
-        aria-label="Toggle Dark Mode">
-        <span v-if="isDarkMode">☀️ Light Mode</span>
-        <span v-else>🌙 Dark Mode</span>
-      </button>
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/90 dark:bg-gray-900/95 border-b border-gray-100 dark:border-gray-800 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col items-center">
+      <!-- Title and Mode Toggle Row -->
+      <div class="w-full flex items-center justify-between mb-2">
+        <div class="flex-1"></div>
+        <div class="text-center">
+          <h1 class="text-xl md:text-2xl font-black tracking-wider uppercase text-gray-900 dark:text-white">Recipe Book</h1>
+          <p class="text-xs md:text-sm text-gray-500 dark:text-gray-300 tracking-wide font-medium mt-1">Find Your Favourite Meal...</p>
+        </div>
+        <div class="flex-1 flex justify-end">
+          <button 
+            @click="$emit('toggle-darkMode')"
+            class="px-3 py-1.5 text-xs font-bold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all flex items-center gap-1.5 shadow-sm"
+          >
+            <span>{{ isDarkMode ? '🌙' : '☀️' }}</span>
+            <span class="hidden sm:inline">{{ isDarkMode ? 'Dark' : 'Light' }}</span>
+          </button>
+        </div>
+      </div>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { actions } from '../store/appStore';
-
 defineProps<{
   isDarkMode: boolean;
 }>();
 
-const emit = defineEmits<{
-  (e: 'toggle-dark-mode'): void;
+defineEmits<{
+  (e: 'toggle-darkMode'): void;
 }>();
-
-const handleToggle = () => {
-  if (actions && typeof actions.toggleDarkMode === 'function') {
-    actions.toggleDarkMode();
-  }
-  emit('toggle-dark-mode');
-};
 </script>
