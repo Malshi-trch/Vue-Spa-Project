@@ -1,9 +1,6 @@
 import { createApp } from "vue";
 import App from "./App.vue";
-import router from "./router"; // Fixed: Imported without curly braces to match 'export default router'
-import "./style.css";
+import "./assets/main.css";
 
-const app = createApp(App);
-
-app.use(router);
-app.mount("#app");
+// Bootstrapping the clean Vue context instance securely
+createApp(App).mount("#app");

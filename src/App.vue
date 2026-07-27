@@ -1,116 +1,119 @@
 <template>
-  <div class="app-container" :class="{ 'dark-theme': isDark }">
-    <!-- Main Content Area managed by Vue Router -->
-    <main class="main-content">
-      <RouterView />
+  <div
+    class="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 flex flex-col transition-colors duration-200">
+    <NavBar />
+
+    <!-- Details Modal/Overlay Screen -->
+    <RecipeDetail v-if="state.selectedRecipe" :recipe="state.selectedRecipe" />
+
+    <!-- Primary Application Content views -->
+    <main v-else class="flex-1 pb-24 max-w-7xl w-full mx-auto">
+      <!-- Browse View Segment -->
+      <div v-if="state.currentTab === 'search'">
+        <div class="p-4 max-w-md mx-auto">
+          <div
+            class="relative flex items-center bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 px-3 py-2">
+            <span class="text-gray-400 mr-2">🔍</span>
+            <input type="text" v-model="searchQuery" placeholder="SEARCH FOR YOUR RECIPE..."
+              class="w-full bg-transparent border-none p-0 text-sm focus:ring-0 uppercase placeholder:text-gray-400 text-gray-800 dark:text-white font-medium" />
+          </div>
+        </div>
+
+        <FilterBar @filter-change="handleFilter" />
+
+        <!-- Asynchronous Load State Handling indicators -->
+        <div v-if="loading" class="text-center py-12 text-sm text-gray-500 font-medium">Fetching beautiful recipes...
+        </div>
+        <div v-else-if="error" class="text-center py-12 text-sm text-rose-500 font-medium">{{ error }}</div>
+
+        <!-- Main Responsive Application Grid Framework -->
+        <div v-else class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <RecipeCard v-for="recipe in filteredRecipes" :key="recipe.id" :recipe="recipe" />
+        </div>
+      </div>
+
+      <!-- Bookmarked Favorites View Segment -->
+      <div v-slot="favorite" v-else-if="state.currentTab === 'favorite'">
+        <h2 class="text-center text-lg font-black tracking-wide my-6 uppercase">Your Saved Favorites</h2>
+        <div v-if="favoriteRecipes.length === 0" class="text-center py-12 text-sm text-gray-400">
+          No favorite recipes added yet.
+        </div>
+        <div v-else class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <RecipeCard v-for="recipe in favoriteRecipes" :key="recipe.id" :recipe="recipe" />
+        </div>
+      </div>
+
+      <!-- Authentication Simulation Profile Segment -->
+      <div v-else-if="state.currentTab === 'profile'">
+        <AuthScreen />
+      </div>
     </main>
 
-    <!-- Bottom Navigation Bar using RouterLink -->
-    <nav class="bottom-nav">
-      <RouterLink to="/" class="nav-item" exact-active-class="active">
-        <span class="icon">🔍</span>
-        <span class="label">search</span>
-      </RouterLink>
-      <RouterLink to="/recipes" class="nav-item" exact-active-class="active">
-        <span class="icon">❤️</span>
-        <span class="label">favorite</span>
-      </RouterLink>
-      <RouterLink to="/profile" class="nav-item" exact-active-class="active">
-        <span class="icon">👤</span>
-        <span class="label">profile</span>
-      </RouterLink>
-    </nav>
+    <BottomNav />
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
+import type { Recipe, RecipeResponse } from './types/recipe';
+import { state } from './store/appStore';
+import NavBar from './components/NavBar.vue';
+import BottomNav from './components/BottomNav.vue';
+import FilterBar from './components/FilterBar.vue';
+import RecipeCard from './components/RecipeCard.vue';
+import RecipeDetail from './components/RecipeDetail.vue';
+import AuthScreen from './components/AuthScreen.vue';
 
-const isDark = ref(true); 
+const recipes = ref<Recipe[]>([]);
+const loading = ref(true);
+const error = ref<string | null>(null);
+
+const searchQuery = ref('');
+const activeFilters = ref({ main: 'All Recipes', sub: '' });
+
+// Fetch clean typed backend mock data securely 
+onMounted(async () => {
+  try {
+    const res = await fetch('https://dummyjson.com/recipes?limit=50');
+    if (!res.ok) throw new Error('Network issue loading target endpoint.');
+    const data: RecipeResponse = await res.json();
+    recipes.value = data.recipes;
+  } catch (err: any) {
+    error.value = err.message || 'Failed to populate dataset.';
+  } finally {
+    loading.value = false;
+  }
+});
+
+const handleFilter = (filters: { main: string; sub: string }) => {
+  activeFilters.value = filters;
+};
+
+// Advanced multi-tier filter matching engine matching design states
+const filteredRecipes = computed(() => {
+  return recipes.value.filter(recipe => {
+    const matchesSearch = recipe.name.toLowerCase().includes(searchQuery.value.toLowerCase());
+
+    let matchesMain = true;
+    if (activeFilters.value.main !== 'All Recipes') {
+      matchesMain = recipe.mealType.some(type =>
+        type.toLowerCase() === activeFilters.value.main.toLowerCase()
+      ) || recipe.tags.some(tag =>
+        tag.toLowerCase() === activeFilters.value.main.toLowerCase()
+      );
+    }
+
+    let matchesSub = true;
+    if (activeFilters.value.sub) {
+      matchesSub = recipe.name.toLowerCase().includes(activeFilters.value.sub.toLowerCase()) ||
+        recipe.tags.some(tag => tag.toLowerCase() === activeFilters.value.sub.toLowerCase());
+    }
+
+    return matchesSearch && matchesMain && matchesSub;
+  });
+});
+
+const favoriteRecipes = computed(() => {
+  return recipes.value.filter(r => state.favorites.includes(r.id));
+});
 </script>
-
-<style>
-:root {
-  --bg-color: #ffffff;
-  --text-color: #333333;
-  --card-bg: #f9f9f9;
-  --primary-green: #2e6f40;
-  --accent-gray: #e0e0e0;
-  --nav-bg: #ffffff;
-}
-
-.dark-theme {
-  --bg-color: #121212;
-  --text-color: #ffffff;
-  --card-bg: #1e1e1e;
-  --primary-green: #42b983;
-  --accent-gray: #333333;
-  --nav-bg: #1a1a1a;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-  background-color: #f0f2f5;
-  display: flex;
-  justify-content: center;
-}
-
-.app-container {
-  width: 100%;
-  max-width: 450px;
-  min-height: 100vh;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 70px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.main-content {
-  flex: 1;
-  padding: 20px;
-}
-
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  max-width: 450px;
-  height: 65px;
-  background-color: var(--nav-bg);
-  border-top: 1px solid var(--accent-gray);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 100;
-}
-
-.nav-item {
-  text-decoration: none;
-  color: var(--text-color);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  opacity: 0.6;
-  font-size: 12px;
-}
-
-.nav-item.active {
-  opacity: 1;
-  font-weight: bold;
-}
-
-.nav-item .icon {
-  font-size: 20px;
-  margin-bottom: 2px;
-}
-</style>
