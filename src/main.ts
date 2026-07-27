@@ -1,6 +1,5 @@
-import { createApp } from "vue";
-import App from "./App.vue";
-import "./assets/main.css";
+import './assets/main.css'
+import { createApp } from 'vue'
+import App from './App.vue'
 
-// Bootstrapping the clean Vue context instance securely
-createApp(App).mount("#app");
+createApp(App).mount('#app')
