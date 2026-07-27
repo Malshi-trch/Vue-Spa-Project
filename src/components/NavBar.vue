@@ -3,18 +3,19 @@
     <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col items-center">
       <!-- Title and Mode Toggle Row -->
       <div class="w-full flex items-center justify-between mb-2">
-        <div class="flex-1"></div>
-        <div class="text-center">
-          <h1 class="text-xl md:text-2xl font-black tracking-wider uppercase text-gray-900 dark:text-white">Recipe Book</h1>
+        <div class="w-24 hidden sm:block"></div>
+        <div class="text-center flex-1 sm:absolute sm:left-1/2 sm:-translate-x-1/2">
+          <h1 class="text-xl md:text-2xl font-black tracking-wider uppercase text-gray-900 dark:text-white">RECIPE BOOK</h1>
           <p class="text-xs md:text-sm text-gray-500 dark:text-gray-300 tracking-wide font-medium mt-1">Find Your Favourite Meal...</p>
         </div>
         <div class="flex-1 flex justify-end">
           <button 
-            @click="$emit('toggle-darkMode')"
-            class="px-3 py-1.5 text-xs font-bold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all flex items-center gap-1.5 shadow-sm"
+            @click="handleToggle"
+            class="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:scale-105 transition-all flex items-center gap-1.5 shadow-sm"
+            aria-label="Toggle Dark Mode"
           >
-            <span>{{ isDarkMode ? '🌙' : '☀️' }}</span>
-            <span class="hidden sm:inline">{{ isDarkMode ? 'Dark' : 'Light' }}</span>
+            <span v-if="isDarkMode">☀️ Light Mode</span>
+            <span v-else>🌙 Dark Mode</span>
           </button>
         </div>
       </div>
@@ -23,11 +24,20 @@
 </template>
 
 <script setup lang="ts">
+import { actions } from '../store/appStore';
+
 defineProps<{
   isDarkMode: boolean;
 }>();
 
-defineEmits<{
-  (e: 'toggle-darkMode'): void;
+const emit = defineEmits<{
+  (e: 'toggle-dark-mode'): void;
 }>();
+
+const handleToggle = () => {
+  if (actions && typeof actions.toggleDarkMode === 'function') {
+    actions.toggleDarkMode();
+  }
+  emit('toggle-dark-mode');
+};
 </script>
