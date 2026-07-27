@@ -1,6 +1,6 @@
 <template>
   <div class="flex-1 max-w-4xl w-full mx-auto px-4 py-6 md:py-10 animate-fade-in">
-    <!-- Top Action Row (Matches your clean header look) -->
+    <!-- Top Action Row -->
     <div class="flex items-center justify-between mb-6">
       <button 
         @click="closeDetail"
@@ -13,17 +13,17 @@
       </span>
     </div>
 
-    <!-- Main Container: 1 column on mobile, 2 columns on desktop -->
+    <!-- Main Container Grid -->
     <div class="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800/60 shadow-md overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-4">
       
-      <!-- Left Column: Hero Image with Floating Info Bar (Error Fixed here) -->
+      <!-- Left Column: Media Presentation -->
       <div class="relative w-full aspect-video md:aspect-square bg-gray-100 dark:bg-gray-800 overflow-hidden">
         <img 
           :src="recipe.image" 
           :alt="recipe.name" 
           class="w-full h-full object-cover"
         />
-        <!-- Floating Info Overlay (Polished Glassmorphic Look) -->
+        <!-- Glassmorphic Info Panel -->
         <div class="absolute bottom-4 left-4 right-4 backdrop-blur-md bg-black/40 text-white rounded-2xl px-4 py-3 flex justify-between items-center text-xs font-semibold shadow-sm border border-white/10">
           <div class="flex items-center gap-1">
             <span class="text-amber-400 text-sm">⭐</span>
@@ -36,10 +36,10 @@
         </div>
       </div>
 
-      <!-- Right Column: Content Section -->
-      <div class="p-6 md:p-8 flex flex-col justify-between">
+      <!-- Right Column: Panel View Content -->
+      <div class="p-6 md:p-8 flex flex-col justify-center h-full min-h-128">
         <div>
-          <!-- Clean Centered Headings from Figma look -->
+          <!-- Heading Setup -->
           <div class="text-center md:text-left mb-6">
             <h2 class="text-xl md:text-2xl font-black text-gray-900 dark:text-white tracking-tight uppercase leading-snug">
               {{ recipe.name }}
@@ -47,7 +47,7 @@
             <div class="w-12 h-1 bg-amber-500 rounded-full mx-auto md:mx-0 mt-2"></div>
           </div>
 
-          <!-- Rounded Tab Switcher -->
+          <!-- Component Tab System -->
           <div class="bg-gray-100 dark:bg-gray-800/80 p-1 rounded-2xl flex items-center mb-6 max-w-sm mx-auto md:mx-0">
             <button 
               @click="activeTab = 'ingredients'"
@@ -65,22 +65,22 @@
             </button>
           </div>
 
-          <!-- Tab Content Display Panel (Error Fixed here) -->
-          <div class="min-h-64">
-            <!-- Ingredients List View -->
-            <ul v-if="activeTab === 'ingredients'" class="space-y-3">
+          <!-- Dynamic Panel Switch Container -->
+          <div class="h-64 overflow-y-auto pr-1">
+            <!-- Ingredients Block -->
+            <ul v-if="activeTab === 'ingredients'" class="space-y-2.5">
               <li 
                 v-for="(ingredient, idx) in recipe.ingredients" 
                 :key="idx"
-                class="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800/40 px-3 py-2.5 rounded-xl border border-gray-100/50 dark:border-gray-800/30"
+                class="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800/40 px-3 py-2 rounded-xl border border-gray-100/50 dark:border-gray-800/30"
               >
                 <span class="text-amber-500 font-bold mt-0.5">•</span>
                 <span>{{ ingredient }}</span>
               </li>
             </ul>
 
-            <!-- Instructions Step View -->
-            <ol v-else class="space-y-4">
+            <!-- Instructions Block -->
+            <ol v-else class="space-y-3.5">
               <li 
                 v-for="(step, idx) in recipe.instructions" 
                 :key="idx"
@@ -95,7 +95,7 @@
           </div>
         </div>
 
-        <!-- Quick Info Blocks Footer -->
+        <!-- Footer Breakdown Segment -->
         <div class="grid grid-cols-2 gap-3 mt-6 pt-4 border-t border-gray-100 dark:border-gray-800 text-center text-xs font-semibold text-gray-500">
           <div class="bg-gray-50 dark:bg-gray-800/30 p-2.5 rounded-xl">
             <span class="block text-[10px] uppercase tracking-wider opacity-60 mb-0.5">Difficulty</span>

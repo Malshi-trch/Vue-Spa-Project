@@ -1,44 +1,42 @@
 <template>
   <div 
-    @click="actions.selectRecipe(recipe)"
-    class="group bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800/60 overflow-hidden cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col h-full relative"
+    @click="selectRecipe"
+    class="group cursor-pointer bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800/60 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
   >
-    <!-- Favorite Button Container with Backdrop Blur -->
-    <button 
-      @click.stop="toggleFavorite"
-      class="absolute top-3 right-3 z-10 p-2 rounded-full backdrop-blur-md bg-white/70 dark:bg-gray-800/70 shadow-sm border border-gray-100/20 dark:border-gray-700/30 hover:scale-110 active:scale-95 transition-all duration-200"
-      :aria-label="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
-    >
-      <span class="text-sm block leading-none">
-        {{ isFavorite ? '❤️' : '🤍' }}
-      </span>
-    </button>
-
-    <!-- Image Wrapper with Subtle Zoom Effect -->
-    <div class="aspect-square w-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+    <!-- Image Wrapper with standard aspect ratio and favorite button -->
+    <div class="relative w-full aspect-video bg-gray-100 dark:bg-gray-800 overflow-hidden">
       <img 
         :src="recipe.image" 
-        :alt="recipe.name"
-        loading="lazy"
-        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        :alt="recipe.name" 
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
+      <!-- Glassmorphic Favorite Button -->
+      <button 
+        @click.stop="toggleFavorite"
+        class="absolute top-2 right-2 p-2 rounded-full backdrop-blur-md bg-black/30 hover:bg-black/50 border border-white/10 text-white transition-all active:scale-90"
+      >
+        <span :class="isFavorite ? 'text-rose-500' : 'text-white/80'">
+          {{ isFavorite ? '❤️' : '🤍' }}
+        </span>
+      </button>
     </div>
 
-    <!-- Details Content Block -->
-    <div class="p-3 flex flex-col flex-1 justify-between">
-      <h3 class="text-sm font-bold text-gray-800 dark:text-gray-100 line-clamp-2 tracking-tight group-hover:text-amber-500 transition-colors">
+    <!-- Info Content Area -->
+    <div class="p-3 md:p-4">
+      <!-- Upgraded Title Sizing & Legibility -->
+      <h3 class="font-bold text-sm md:text-base text-gray-900 dark:text-gray-100 line-clamp-1 tracking-tight mb-2 group-hover:text-amber-500 transition-colors">
         {{ recipe.name }}
       </h3>
       
-      <!-- Flex alignment fixing the footer row -->
-      <div class="flex justify-between items-center mt-3 pt-2 border-t border-gray-50 dark:border-gray-800 text-[11px] font-semibold">
-        <div class="flex items-center text-amber-500">
-          <span class="mr-1">⭐</span>
-          <span>{{ recipe.rating.toFixed(1) }}</span>
+      <!-- Upgraded Meta Data Display -->
+      <div class="flex items-center justify-between text-xs font-semibold text-gray-500 dark:text-gray-400">
+        <div class="flex items-center gap-1">
+          <span class="text-amber-400 text-sm">⭐</span>
+          <span class="text-gray-700 dark:text-gray-300">{{ recipe.rating.toFixed(1) }}</span>
         </div>
-        <div class="flex items-center text-gray-400 dark:text-gray-500 font-medium">
-          <span class="mr-1">⏱️</span>
-          <span>{{ recipe.prepTimeMinutes }} min</span>
+        <div class="flex items-center gap-1 opacity-90">
+          <span>⏱️</span>
+          <span>{{ recipe.prepTimeMinutes + recipe.cookTimeMinutes }} min</span>
         </div>
       </div>
     </div>
@@ -55,6 +53,10 @@ const props = defineProps<{
 }>();
 
 const isFavorite = computed(() => state.favorites.includes(props.recipe.id));
+
+const selectRecipe = () => {
+  actions.selectRecipe(props.recipe);
+};
 
 const toggleFavorite = () => {
   actions.toggleFavorite(props.recipe.id);
