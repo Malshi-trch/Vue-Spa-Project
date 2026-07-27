@@ -12,12 +12,13 @@
     <main v-else class="flex-1 pb-24 max-w-7xl w-full mx-auto">
       <!-- Browse View Segment -->
       <div v-if="state.currentTab === 'search'">
-        <div class="p-4 max-w-md mx-auto">
+        <!-- Polished Interactive Search Container with Amber Highlights -->
+        <div class="p-4 max-w-md mx-auto mb-2">
           <div
-            class="relative flex items-center bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 px-3 py-2">
-            <span class="text-gray-400 mr-2">🔍</span>
-            <input type="text" v-model="searchQuery" placeholder="SEARCH FOR YOUR RECIPE..."
-              class="w-full bg-transparent border-none p-0 text-sm focus:ring-0 uppercase placeholder:text-gray-400 text-gray-800 dark:text-white font-medium" />
+            class="relative flex items-center bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 px-3 py-2 transition-all focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-amber-500 focus-within:shadow-md">
+            <span class="text-gray-400 mr-2 text-sm">🔍</span>
+            <input type="text" v-model="searchQuery" placeholder="Search for your favorite meal..."
+              class="w-full bg-transparent border-none p-0 text-sm focus:ring-0 placeholder:text-gray-400 text-gray-800 dark:text-white font-medium" />
           </div>
         </div>
 
