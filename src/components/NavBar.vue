@@ -5,16 +5,34 @@
       <h1 class="text-xl font-bold text-gray-900 dark:text-white tracking-wide">RECIPE BOOK</h1>
       <p class="text-xs text-gray-500 dark:text-gray-400">Find Your Favourite Meal...</p>
     </div>
-    <button @click="toggleDarkMode"
-      class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:scale-105 transition-transform"
+    
+    <button @click="handleToggle"
+      class="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:scale-105 transition-all"
       aria-label="Toggle Dark Mode">
-      <span v-if="state.darkMode">☀️ Light Mode</span>
+      <span v-if="isDarkMode">☀️ Light Mode</span>
       <span v-else>🌙 Dark Mode</span>
     </button>
   </header>
 </template>
 
 <script setup lang="ts">
-import { state, actions } from '../store/appStore';
-const toggleDarkMode = actions.toggleDarkMode;
+import { actions } from '../store/appStore';
+
+// Define the incoming prop from App.vue
+defineProps<{
+  isDarkMode: boolean;
+}>();
+
+// Define the custom event to notify App.vue
+const emit = defineEmits<{
+  (e: 'toggle-dark-mode'): void;
+}>();
+
+// Handle the click: Trigger the store action AND notify App.vue to update the DOM
+const handleToggle = () => {
+  if (actions && typeof actions.toggleDarkMode === 'function') {
+    actions.toggleDarkMode();
+  }
+  emit('toggle-dark-mode');
+};
 </script>

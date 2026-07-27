@@ -1,7 +1,9 @@
 <template>
   <div
     class="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 flex flex-col transition-colors duration-200">
-    <NavBar />
+    
+    <!-- Connected Theme Prop and Custom Emit Listener -->
+    <NavBar :is-dark-mode="state.darkMode" @toggle-dark-mode="updateDarkModeDOM" />
 
     <!-- Details Modal/Overlay Screen -->
     <RecipeDetail v-if="state.selectedRecipe" :recipe="state.selectedRecipe" />
@@ -22,9 +24,12 @@
         <FilterBar @filter-change="handleFilter" />
 
         <!-- Asynchronous Load State Handling indicators -->
-        <div v-if="loading" class="text-center py-12 text-sm text-gray-500 font-medium">Fetching beautiful recipes...
+        <div v-if="loading" class="text-center py-12 text-sm text-gray-500 font-medium">
+          Fetching beautiful recipes...
         </div>
-        <div v-else-if="error" class="text-center py-12 text-sm text-rose-500 font-medium">{{ error }}</div>
+        <div v-else-if="error" class="text-center py-12 text-sm text-rose-500 font-medium">
+          {{ error }}
+        </div>
 
         <!-- Main Responsive Application Grid Framework -->
         <div v-else class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -71,8 +76,20 @@ const error = ref<string | null>(null);
 const searchQuery = ref('');
 const activeFilters = ref({ main: 'All Recipes', sub: '' });
 
-// Fetch clean typed backend mock data securely 
+// 1. Theme Manager Side Effect Logic
+const updateDarkModeDOM = () => {
+  if (state.darkMode) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+};
+
+// Fetch data and handle initialization states
 onMounted(async () => {
+  // 2. Initialize DOM state immediately when mounting component
+  updateDarkModeDOM();
+
   try {
     const res = await fetch('https://dummyjson.com/recipes?limit=50');
     if (!res.ok) throw new Error('Network issue loading target endpoint.');
